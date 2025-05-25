@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caseload Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div id="app-container">
+        <section id="login-section">
+            <h2>Login</h2>
+            <form id="login-form">
+                <div>
+                    <label for="login-email">Email:</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div>
+                    <label for="login-password">Password:</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit">Login</button>
+                <p id="login-error" class="error-message" aria-live="polite"></p>
+            </form>
+        </section>
+
+        <section id="caseload-section" style="display:none;">
+            <header>
+                <h2>Your Caseload</h2>
+                <button id="logout-button">Logout</button>
+            </header>
+            
+            <div id="caseload-message" class="message" aria-live="polite"></div>
+
+            <div id="customer-form-area">
+                <h3>Add/Edit Customer</h3>
+                <form id="customer-form">
+                    <input type="hidden" id="customer-id">
+                    <div>
+                        <label for="customer-name">Name:</label>
+                        <input type="text" id="customer-name" required>
+                    </div>
+                    <div>
+                        <label for="customer-email">Email:</label>
+                        <input type="email" id="customer-email">
+                    </div>
+                    <div>
+                        <label for="customer-phone">Phone:</label>
+                        <input type="tel" id="customer-phone">
+                    </div>
+                    <div>
+                        <label for="customer-notes">Notes:</label>
+                        <textarea id="customer-notes"></textarea>
+                    </div>
+                    <button type="submit" id="save-customer-button">Save Customer</button>
+                    <button type="button" id="clear-form-button">Clear/Cancel</button>
+                </form>
+            </div>
+
+            <div id="customer-list-area">
+                <h3>Customers</h3>
+                <ul id="customer-list">
+                    <!-- Customer items will be populated here -->
+                </ul>
+                <p id="no-customers-message" style="display:none;">No customers found.</p>
+            </div>
+        </section>
+
+        <!-- Modal for displaying parsed CV text -->
+        <div id="cv-text-modal" class="modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="cv-text-modal-title">
+            <div class="modal-content">
+                <button type="button" class="close-button" onclick="document.getElementById('cv-text-modal').style.display='none'" aria-label="Close">&times;</button>
+                <h3 id="cv-text-modal-title">Parsed CV Text</h3>
+                <pre id="cv-parsed-text-content"></pre>
+            </div>
+        </div>
+
+        <!-- Modal for displaying Tailored CV text -->
+        <div id="tailored-cv-modal" class="modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="tailored-cv-modal-title">
+            <div class="modal-content">
+                <button type="button" class="close-button" id="close-tailored-cv-modal-button" aria-label="Close">&times;</button>
+                <h5 id="tailored-cv-modal-title">Tailored CV</h5>
+                <pre id="tailored-cv-output"></pre>
+                <button id="copy-tailored-cv-button">Copy Text</button>
+                <button id="download-md-button">Download as .md</button>
+            </div>
+        </div>
+
+        <section id="job-search-section" style="display:none;">
+            <h2>Job Search</h2>
+            <form id="job-search-form">
+                <div>
+                    <label for="job-search-keywords">Keywords:</label>
+                    <input type="text" id="job-search-keywords" required>
+                </div>
+                <div>
+                    <label for="job-search-location">Location:</label>
+                    <input type="text" id="job-search-location" required>
+                </div>
+                <div>
+                    <label for="job-search-radius">Radius (miles):</label>
+                    <input type="number" id="job-search-radius" value="10" required>
+                </div>
+                <button type="submit" id="job-search-button">Search Jobs</button>
+            </form>
+            <div id="job-search-results">
+                <!-- Job search results will be populated here -->
+            </div>
+            <p id="job-search-message" class="message" aria-live="polite"></p>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
