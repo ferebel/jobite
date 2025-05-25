@@ -454,56 +454,82 @@ router.post('/api/job-search', withAuth, async (request: AuthenticatedRequest, e
 
 // --- CV Tailoring API Endpoint ---
 
-// Placeholder function for Gemini API call
-async function callGeminiApi(prompt: string, apiKey: string, customerName: string, cvParsedText: string, jobDescription: string, jobTitle?: string, jobCompany?: string): Promise<string> {
-  // Log the prompt for inspection (as required)
-  console.log("Gemini API Prompt:", prompt);
-
-  // Simulate API call - DO NOT make a real HTTP request here for this step
+// Function to call Google Gemini API
+async function callGeminiApi(prompt: string, apiKey: string): Promise<{ tailoredCvText: string | null; error: string | null }> {
   if (!apiKey) {
-    console.warn("GEMINI_API_KEY not configured. Returning placeholder response for CV tailoring.");
-    return `
-## Tailored CV for ${customerName || 'Customer'} (API Key Missing - Simulated)
-
-**Applying for:** ${jobTitle || 'N/A'} at ${jobCompany || 'N/A'}
-
-**Original CV Snippet (for context):**
-${cvParsedText.substring(0, 200)}...
-
-**Job Description Snippet (for context):**
-${jobDescription.substring(0, 200)}...
-
-**AI Tailoring Suggestions (Simulated - API Key Not Provided):**
-- This is a placeholder response because the Gemini API key is not configured.
-- Full AI tailoring will occur when connected to the Gemini API with a valid key.
-- Potential actions would include:
-  - Identifying keywords from the job description.
-  - Emphasizing relevant skills from the original CV.
-  - Rewriting sections for better alignment with the job.
-  - Suggesting quantifiable achievements.
-`;
+    console.warn("GEMINI_API_KEY not configured. Skipping live API call.");
+    return { 
+      tailoredCvText: null, 
+      error: "AI service is not configured. Please contact support." 
+    };
   }
 
-  // Simulated response structure if API key were present but still in placeholder mode
-  return `
-## Tailored CV for ${customerName || 'Customer'}
+  const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
 
-**Applying for:** ${jobTitle || 'N/A'} at ${jobCompany || 'N/A'}
+  const requestBody = {
+    contents: [
+      {
+        parts: [
+          {
+            text: prompt,
+          },
+        ],
+      },
+    ],
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 2048,
+    },
+    safetySettings: [
+      { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+      { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+      { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+      { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+    ],
+  };
 
-**Original CV Snippet (for context):**
-${cvParsedText.substring(0, 200)}...
+  try {
+    const response = await fetch(GEMINI_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
 
-**Job Description Snippet (for context):**
-${jobDescription.substring(0, 200)}...
+    if (!response.ok) {
+      const errorResponse = await response.json().catch(() => ({ message: response.statusText }));
+      console.error("Gemini API Error - HTTP Status:", response.status, errorResponse);
+      return { 
+        tailoredCvText: null, 
+        error: `AI tailoring failed. API request error: ${errorResponse.error?.message || response.statusText || 'Unknown error'}` 
+      };
+    }
 
-**AI Tailoring Suggestions (Simulated):**
-- Identified keywords: Leadership, Project Management, Agile.
-- Emphasized skill: Cross-functional team collaboration.
-- Rewrote section: Professional Summary to align with company values.
-[Consider quantifying achievement: Successfully launched 3 major projects.]
+    const data = await response.json();
 
-(This is a simulated response. Full AI tailoring will occur when connected to Gemini API with a valid key.)
-`;
+    if (data.candidates && data.candidates.length > 0 && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts.length > 0 && data.candidates[0].content.parts[0].text) {
+      return { tailoredCvText: data.candidates[0].content.parts[0].text, error: null };
+    } else if (data.candidates && data.candidates.length > 0 && data.candidates[0].finishReason === "SAFETY") {
+      console.warn("Gemini API: Content generation blocked due to safety settings.");
+      return { 
+        tailoredCvText: null, 
+        error: "Content generation blocked by AI safety settings. Please revise the input or contact support if you believe this is an error." 
+      };
+    } else {
+      console.warn("Gemini API: No content found in response or unexpected response structure:", data);
+      return { 
+        tailoredCvText: null, 
+        error: "AI tailoring failed. No content received from the AI service." 
+      };
+    }
+  } catch (error: any) {
+    console.error("Gemini API Fetch Error:", error);
+    return { 
+      tailoredCvText: null, 
+      error: `AI tailoring failed. Network or unexpected error: ${error.message}` 
+    };
+  }
 }
 
 
@@ -531,10 +557,9 @@ router.post('/api/customers/:customerId/tailor-cv', withAuth, async (request: Au
   const work_coach_id = request.user.id;
   const supabase = request.supabase;
 
-  // Fetch customer's parsed CV text and name
   const { data: customer, error: customerError } = await supabase
     .from('customers')
-    .select('name, cv_parsed_text, notes') // Include notes if they might be relevant for tailoring
+    .select('name, cv_parsed_text, notes')
     .eq('id', customerId)
     .eq('work_coach_id', work_coach_id)
     .single();
@@ -546,12 +571,10 @@ router.post('/api/customers/:customerId/tailor-cv', withAuth, async (request: Au
   if (!customer) {
     return error(404, 'Customer not found or not owned by this work coach.');
   }
-
   if (!customer.cv_parsed_text) {
     return error(400, 'Customer has no parsed CV to tailor. Please upload and parse a CV first.');
   }
 
-  // Construct the prompt for Gemini API
   const prompt = `
 You are an expert CV tailoring assistant. Your task is to rewrite the following original CV content to be specifically tailored for the provided job description.
 
@@ -577,19 +600,13 @@ Please perform the following actions:
 5. If there are opportunities to add quantifiable achievements, please include a suggestion in brackets, like: [Consider quantifying this achievement, e.g., 'Increased X by Y%'].
 6. Format the output as a complete tailored CV using Markdown (e.g., for headings, bold text, bullet points). Do not include any introductory or conversational phrases in your response, only the tailored CV text itself.
 `.trim();
+  
+  // Log the prompt for inspection if needed (can be verbose)
+  // console.log("Gemini API Prompt:", prompt);
 
-  // Call the placeholder Gemini API function
-  const tailoredCvText = await callGeminiApi(
-    prompt, 
-    env.GEMINI_API_KEY || '', // Pass empty string if undefined, function handles it
-    customer.name || '',
-    customer.cv_parsed_text,
-    jobDescription,
-    jobTitle,
-    jobCompany
-  );
+  const geminiResult = await callGeminiApi(prompt, env.GEMINI_API_KEY || '');
 
-  return json({ tailoredCvText: tailoredCvText });
+  return json(geminiResult); // Returns { tailoredCvText: "...", error: null } or { tailoredCvText: null, error: "..." }
 });
 
 

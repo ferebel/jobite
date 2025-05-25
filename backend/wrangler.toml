@@ -1,0 +1,34 @@
+# Cloudflare Wrangler configuration file
+# See https://developers.cloudflare.com/workers/wrangler/configuration/
+
+name = "dwp-job-app-backend" # Replace with your desired worker name (must be unique within your Cloudflare account)
+main = "index.ts"           # Entry point for your worker script (e.g., index.ts or src/index.ts)
+compatibility_date = "2024-03-20" # Use a recent date
+
+# [vars]
+# Example: If you needed to pass a non-secret environment variable, you could do it here.
+# For this project, SUPABASE_URL, SUPABASE_ANON_KEY, GEMINI_API_KEY, DWP_API_KEY, and CV_BUCKET_NAME
+# are best handled as secrets using `wrangler secret put`.
+# CV_BUCKET_NAME = "cvs" # This is an example; if not set as a secret, the code defaults to "cvs".
+
+# If you were using Durable Objects, KV, R2, D1, or other bindings, you would configure them here.
+# For example:
+# [[kv_namespaces]]
+# binding = "MY_KV_NAMESPACE"
+# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# [[r2_buckets]]
+# binding = "MY_BUCKET"
+# bucket_name = "my-bucket-name"
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "my-database"
+# database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+# For local development with `wrangler dev`, you might want to define local fallbacks
+# or specific configurations.
+# [dev]
+# port = 8787
+# local_protocol = "http"
+# upstream_protocol = "https"
