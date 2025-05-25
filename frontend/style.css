@@ -1,0 +1,519 @@
+/* General Reset & Body */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f4;
+    padding: 20px;
+    font-size: 16px;
+}
+
+#app-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings */
+h1, h2, h3 {
+    margin-bottom: 0.75em;
+    color: #333;
+}
+
+h2 {
+    font-size: 1.8em;
+}
+
+h3 {
+    font-size: 1.4em;
+    margin-top: 1em;
+}
+
+/* Forms */
+form {
+    margin-bottom: 20px;
+}
+
+form div {
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* Buttons */
+button {
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+button:hover, button:focus {
+    background-color: #0056b3;
+    outline: 2px solid #0056b3;
+    outline-offset: 2px;
+}
+
+button[type="button"] {
+    background-color: #6c757d;
+}
+
+button[type="button"]:hover, button[type="button"]:focus {
+    background-color: #545b62;
+}
+
+#logout-button {
+    background-color: #dc3545;
+}
+#logout-button:hover, #logout-button:focus {
+    background-color: #c82333;
+}
+
+/* Sections */
+#login-section, #caseload-section {
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+#caseload-section header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* Customer List */
+#customer-list-area {
+    margin-top: 20px;
+}
+
+#customer-list {
+    list-style: none;
+    padding: 0;
+}
+
+#customer-list li {
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+}
+
+#customer-list li .customer-details {
+    margin-bottom: 10px;
+}
+
+#customer-list li .customer-actions button {
+    margin-right: 5px;
+    font-size: 0.9em;
+    padding: 5px 10px;
+}
+
+/* Error and Messages */
+.error-message {
+    color: #dc3545;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.message {
+    color: #28a745; /* Green for success */
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+#caseload-message.error-message { /* Specific error styling for caseload message */
+    color: #dc3545;
+}
+
+
+/* Responsive adjustments */
+@media (min-width: 600px) {
+    #customer-form-area, #customer-list-area {
+        /* Could add flex or grid here for side-by-side layout if desired */
+    }
+
+    #customer-list li {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    #customer-list li .customer-details {
+        margin-bottom: 0;
+        flex-grow: 1;
+    }
+    #customer-list li .customer-actions {
+        flex-shrink: 0; /* Prevent actions from shrinking */
+    }
+}
+
+#no-customers-message {
+    padding: 10px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* CV Upload Area in Customer List Item */
+.customer-cv-area {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #ddd;
+}
+
+.customer-cv-area label {
+    font-size: 0.9em;
+    font-weight: normal;
+    color: #555;
+}
+
+.customer-cv-area input[type="file"] {
+    width: auto; /* Don't make file input full width */
+    /* Padding and font-size handled by general .customer-cv-area button styling */
+    margin-right: 5px;
+    border: none; /* Simpler look for file input */
+}
+.customer-cv-area input[type="file"]:focus-visible {
+    outline: 2px solid #0056b3; /* Explicit focus for keyboard */
+    outline-offset: 1px;
+}
+
+
+.customer-cv-area .cv-filename {
+    font-size: 0.9em;
+    color: #555; /* Darker gray for better contrast */
+    margin-left: 5px;
+    display: inline-block; /* Keep it on the same line */
+}
+
+.customer-cv-area .view-cv-button {
+    /* font-size and padding handled by .customer-cv-area button */
+    margin-left: 5px;
+    background-color: #17a2b8; /* Info color */
+}
+.customer-cv-area .view-cv-button:hover {
+    background-color: #138496;
+}
+
+/* Increased target sizes for in-list buttons */
+.customer-actions button, 
+.customer-cv-area button, 
+.customer-cv-tailoring-area button {
+    padding: 0.5em 0.8em; 
+    font-size: 0.9rem; 
+    min-height: 38px; /* Approach 44px with padding */
+    margin-top: 5px; /* Add some space if they wrap */
+    margin-bottom: 5px;
+}
+/* Ensure focus indicators are consistent */
+button:focus, 
+input[type="text"]:focus, 
+input[type="email"]:focus, 
+input[type="password"]:focus, 
+input[type="tel"]:focus, 
+textarea:focus,
+input[type="number"]:focus {
+    outline: none; /* Remove default outline if custom is applied */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5); /* Standard blue glow */
+}
+.close-button:focus { /* Specific for modal close buttons if they behave differently */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+}
+
+
+/* Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto; /* 10% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    max-width: 700px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    position: relative;
+}
+
+.close-button {
+    color: #555; /* Darker for better contrast */
+    float: right;
+    font-size: 1.5rem; /* Adjusted for better proportion as a button */
+    font-weight: bold;
+    line-height: 1; /* Ensure consistent height */
+    padding: 0.25rem 0.75rem; /* Make it more button-like */
+    border: 1px solid transparent;
+    background-color: transparent;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+    background-color: #f0f0f0; /* Slight background on hover/focus */
+    border-color: #ccc; /* Subtle border on hover/focus */
+}
+
+#cv-parsed-text-content {
+    white-space: pre-wrap; /* Respects newlines and spaces */
+    word-wrap: break-word; /* Breaks long words */
+    max-height: 60vh; /* Limit height and make scrollable */
+    overflow-y: auto;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 3px;
+    margin-top: 10px;
+}
+
+/* Job Search Section */
+#job-search-section {
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    margin-top: 20px; /* Give some space from caseload section */
+}
+
+#job-search-form input[type="text"],
+#job-search-form input[type="number"] {
+    width: 100%; /* Full width for inputs in this form */
+    margin-bottom: 10px; /* Space between inputs */
+}
+
+#job-search-results {
+    margin-top: 20px;
+}
+
+#job-search-results h4 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+#job-search-results ul {
+    list-style: none;
+    padding-left: 0; /* Remove default padding */
+}
+
+#job-search-results li {
+    margin-bottom: 8px;
+    padding: 8px;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+#job-search-results li a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+#job-search-results li a:hover {
+    text-decoration: underline;
+}
+
+#job-search-results .dwp-job-item {
+    border-left: 3px solid #007bff; /* Blue accent for DWP jobs */
+    padding-left: 10px; /* Indent content slightly */
+    margin-bottom: 15px; /* More space between DWP job items */
+}
+
+#job-search-results .dwp-job-item .job-title a {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #0056b3;
+}
+
+#job-search-results .dwp-job-item .job-title a:hover {
+    text-decoration: underline;
+}
+
+#job-search-results .dwp-job-item div {
+    margin-bottom: 4px; /* Space between details within a job item */
+    font-size: 0.95em;
+}
+
+#job-search-results .dwp-job-item .job-company {
+    font-style: italic;
+    color: #555;
+}
+
+#job-search-results .dwp-job-item .job-location {
+    color: #555; /* Darker gray for better contrast */
+}
+
+#job-search-results .dwp-job-item .job-description {
+    font-size: 0.9em;
+    color: #444;
+    margin-top: 5px;
+}
+#job-search-results .dwp-job-item .job-date,
+#job-search-results .dwp-job-item .job-salary {
+    font-size: 0.85em;
+    color: #666;
+}
+
+
+#job-search-results .search-link-item { /* Styling for external search links */
+    /* Similar to dwp-job-item or different as needed */
+    margin-bottom: 5px; /* Less space for simple links */
+}
+
+#job-search-message.error-message {
+    color: #dc3545; /* Red for error messages */
+}
+
+#job-search-message.message {
+    color: #28a745; /* Green for success/info messages */
+}
+
+/* CV Tailoring Section in Customer List Item */
+.customer-cv-tailoring-area {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #007bff; /* Blue dashed line to separate */
+}
+
+.customer-cv-tailoring-area h5 { /* Using h5 for sub-section heading */
+    font-size: 1.1em;
+    color: #0056b3;
+    margin-bottom: 10px;
+}
+
+.customer-cv-tailoring-area textarea,
+.customer-cv-tailoring-area input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95em;
+}
+
+.customer-cv-tailoring-area textarea {
+    min-height: 120px; /* More space for job description */
+}
+
+.customer-cv-tailoring-area button {
+    background-color: #28a745; /* Green for generate button */
+    font-size: 0.9em;
+    padding: 8px 12px;
+}
+.customer-cv-tailoring-area button:hover {
+    background-color: #218838;
+}
+
+.tailoring-status-message {
+    font-size: 0.9em;
+    margin-top: 10px;
+}
+.tailoring-status-message.error-message {
+    color: #dc3545;
+}
+.tailoring-status-message.message {
+    color: #0056b3; /* Darker blue for better contrast */
+    /* If using a light blue background, ensure text is dark enough or vice-versa */
+}
+
+/* Tailored CV Modal */
+#tailored-cv-modal .modal-content {
+    max-width: 800px; /* Wider for CV text */
+}
+
+#tailored-cv-modal h5 { /* Modal title */
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#tailored-cv-output {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-height: 65vh; /* Taller for CV */
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace; /* Monospace for Markdown */
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+#tailored-cv-modal button {
+    margin-top: 15px;
+    margin-right: 10px;
+}
+
+#copy-tailored-cv-button {
+    background-color: #17a2b8; /* Info blue */
+}
+#copy-tailored-cv-button:hover {
+    background-color: #138496;
+}
+
+#download-md-button {
+    background-color: #6c757d; /* Secondary grey */
+}
+#download-md-button:hover {
+    background-color: #545b62;
+}
+    color: #dc3545; /* Red for error messages */
+}
+
+#job-search-message.message {
+    color: #28a745; /* Green for success/info messages */
+}
